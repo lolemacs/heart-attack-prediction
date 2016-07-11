@@ -4,14 +4,6 @@ from openpyxl.compat import range
 import numpy as np
 import cPickle
 
-def one_hot(x,n):
-    if type(x) == list:
-	x = np.array(x)
-    x = x.flatten()
-    o_h = np.zeros((len(x),n))
-    o_h[np.arange(len(x)),x] = 1
-    return o_h
-
 wb = load_workbook(filename = 'dataset.xlsx')
 first_sheet = wb.get_sheet_names()[0]
 ws = wb.get_sheet_by_name(first_sheet)
@@ -29,7 +21,7 @@ Y = Y[1:]
 Y = [y if y == 1 else 0 for y in Y]
 
 X = np.array(X)
-Y = one_hot(Y,2)
+Y = np.array(Y)
 
 data = {"data" : X, "labels" : Y}
 
