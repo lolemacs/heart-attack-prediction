@@ -3,9 +3,9 @@ import numpy as np
 from sklearn import neighbors
 from sklearn.metrics import f1_score, accuracy_score
 
-n_neighbors = 4
+n_neighbors = 3
 
-trX, teX, trY, teY = load.loadData(onehot = False, poly = 5, prep = 'std')
+trX, teX, trY, teY = load.loadData(onehot = False, poly = 10, prep = 'std')
 
 for weights in ['uniform', 'distance']:
     nn = neighbors.KNeighborsClassifier(n_neighbors, weights=weights)

@@ -3,6 +3,8 @@ import numpy as np
 from sklearn import preprocessing
 from sklearn.preprocessing import PolynomialFeatures
 
+np.random.seed(1234)
+
 def standardize(X):
     return preprocessing.StandardScaler().fit_transform(X)
 
@@ -27,6 +29,10 @@ def loadData(onehot = True, prep = None, poly = None):
         data = cPickle.load(f)
     X = data["data"].astype('float64')
     Y = data["labels"]
+
+    p = np.random.permutation(len(Y))
+    X = X[p]
+    Y = Y[p]
     
     if prep: X = prepFuncs[prep](X)
     if poly != None: X = polyExpand(X, poly)
