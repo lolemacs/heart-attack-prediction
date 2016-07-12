@@ -16,6 +16,11 @@ prepFuncs = {"std" : standardize, "mm" : minmax}
 def polyExpand(X, order):
     return PolynomialFeatures(order).fit_transform(X)
 
+def get_weights(Y):
+    positiveWeight = np.mean(Y == 1)
+    return np.array([positiveWeight if y == 1 else 1 - positiveWeight for y in Y])
+
+
 def one_hot(x,n):
     if type(x) == list:
         x = np.array(x)
