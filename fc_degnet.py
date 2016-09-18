@@ -10,7 +10,7 @@ import sys
 sys.setrecursionlimit(10000)
 
 trX, teX, trY, teY = load.loadData(onehot = True, poly = 3, prep = 'std')
-trX, teX, trY, teY = mnist(onehot = True)
+#trX, teX, trY, teY = mnist(onehot = True)
 
 def model(X, drop1, drop2):
     u = dropout(X, drop1)
