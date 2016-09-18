@@ -29,8 +29,8 @@ def one_hot(x,n):
     o_h[np.arange(len(x)),x] = 1
     return o_h
 
-def loadData(onehot = True, prep = None, poly = None):
-    with open("data.pkl","rb") as f:
+def loadData(onehot = True, prep = None, poly = None, split=True, fileName='data.pkl'):
+    with open(fileName,"rb") as f:
         data = cPickle.load(f)
     X = data["data"].astype('float64')
     Y = data["labels"]
@@ -43,11 +43,14 @@ def loadData(onehot = True, prep = None, poly = None):
     if poly != None: X = polyExpand(X, poly)
     if onehot: Y = one_hot(Y,2)
     
-    nPoints = len(Y)
-    valSplit = int(0.8*nPoints)
-    
-    trX = X[:valSplit]
-    teX = X[valSplit:]
-    trY = Y[:valSplit]
-    teY = Y[valSplit:]
-    return trX, teX, trY, teY
+    if split:
+        nPoints = len(Y)
+        valSplit = int(0.8*nPoints)
+        
+        trX = X[:valSplit]
+        teX = X[valSplit:]
+        trY = Y[:valSplit]
+        teY = Y[valSplit:]
+        return trX, teX, trY, teY
+    else:
+        return X, Y

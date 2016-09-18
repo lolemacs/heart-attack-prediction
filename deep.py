@@ -23,15 +23,12 @@ batch_size = 64
 nb_classes = 2
 nb_epoch = 200
 
-X_train, X_test, Y_train, Y_test = load.loadData(onehot = False)
-
-print (Y_train)
-quit()
+X_train, X_val, Y_train, Y_val = load.loadData(onehot = False)
 
 X_train = X_train.astype('float32')
-X_test = X_test.astype('float32')
+X_val = X_val.astype('float32')
 print(X_train.shape[0], 'train samples')
-print(X_test.shape[0], 'test samples')
+print(X_val.shape[0], 'test samples')
 
 weights = sklearn.utils.compute_class_weight('balanced', [0,1], Y_train)
 
@@ -73,11 +70,9 @@ lrate = LearningRateScheduler(lr_schedule)
 
 callbacks = [lrate]
 
-
-
 model.compile(loss='binary_crossentropy', optimizer=Nadam(), metrics=['accuracy'])
 
-history = model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, verbose=1, validation_data=(X_test, Y_test), shuffle=True, class_weight={0:weights[0], 1:weights[1]})
+history = model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, verbose=1, validation_data=(X_val, Y_val), shuffle=True, class_weight={0:weights[0], 1:weights[1]})
 
 def predict(x):
     p = model.predict(x)
@@ -85,4 +80,7 @@ def predict(x):
     return p
 
 print ("Training F1: ", f1_score(Y_train, predict(X_train)))
+print ('Val F1:', f1_score(Y_val, predict(X_val)))
+
+X_test, Y_test = load.loadData(onehot = False, split=False, fileName='test.pkl')
 print ('Test F1:', f1_score(Y_test, predict(X_test)))

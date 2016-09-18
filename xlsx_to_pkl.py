@@ -26,7 +26,7 @@ Y = np.array(Y)
 
 data = {"data" : X, "labels" : Y}
 
-with open("data.pkl","wb") as f:
+with open(sys.argv[2],"wb") as f:
     cPickle.dump(data, f, -1)
 
 
