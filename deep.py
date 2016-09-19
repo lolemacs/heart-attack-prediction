@@ -15,15 +15,16 @@ from keras.optimizers import SGD, Adam, RMSprop, Nadam
 from keras.layers.advanced_activations import PReLU
 from keras.utils import np_utils
 from sklearn.metrics import f1_score, accuracy_score
+from keras import backend as K
 import sklearn
 import load
 import sys
 
 batch_size = 64
 nb_classes = 2
-nb_epoch = 200
+nb_epoch = 19
 
-X_train, X_val, Y_train, Y_val = load.loadData(onehot = False)
+X_train, X_val, Y_train, Y_val = load.loadData(onehot = False, poly = 10, prep = 'std')
 
 X_train = X_train.astype('float32')
 X_val = X_val.astype('float32')
@@ -40,16 +41,16 @@ def model(input):
     for i in range(5):
         net2 = Dropout(0.2)(net)
         net2 = Dense(nFeats[0], init='he_normal')(net2)
-        net2 = BatchNormalization(gamma_regularizer=l2(0.0001))(net2)
+        net2 = BatchNormalization(gamma_regularizer=l2(0.001))(net2)
         net2 = Activation('relu')(net2)
         net = merge([net, net2], mode='sum')
 
     net = Dense(1, init='he_normal')(net)
-    net = BatchNormalization()(net)
+    net = BatchNormalization(gamma_regularizer=l2(0.001))(net)
     net = Activation('sigmoid')(net)
     return net
 
-input = Input(shape=(3,))
+input = Input(shape=(X_train.shape[1],))
 
 model = Model(input=input, output=model(input))
 
@@ -70,7 +71,7 @@ lrate = LearningRateScheduler(lr_schedule)
 
 callbacks = [lrate]
 
-model.compile(loss='binary_crossentropy', optimizer=Nadam(), metrics=['accuracy'])
+model.compile(loss='binary_crossentropy', optimizer=Nadam(), metrics=['f1'])
 
 history = model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, verbose=1, validation_data=(X_val, Y_val), shuffle=True, class_weight={0:weights[0], 1:weights[1]})
 
@@ -82,5 +83,5 @@ def predict(x):
 print ("Training F1: ", f1_score(Y_train, predict(X_train)))
 print ('Val F1:', f1_score(Y_val, predict(X_val)))
 
-X_test, Y_test = load.loadData(onehot = False, split=False, fileName='test.pkl')
+X_test, Y_test = load.loadData(onehot = False, split=False, poly=10, prep='std', fileName='test.pkl')
 print ('Test F1:', f1_score(Y_test, predict(X_test)))
