@@ -54,3 +54,7 @@ def loadData(onehot = True, prep = None, poly = None, split=True, fileName='data
         return trX, teX, trY, teY
     else:
         return X, Y
+
+
+if __name__ == "__main__":
+    loadData()
