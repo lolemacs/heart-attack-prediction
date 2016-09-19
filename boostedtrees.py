@@ -5,7 +5,7 @@ from xgboost.sklearn import XGBClassifier
 from sklearn import cross_validation, metrics
 from sklearn.grid_search import GridSearchCV
 
-def modelfit(alg, trX, trY, teX, teY ,useTrainCV=True, cv_folds=5, early_stopping_rounds=35):
+def modelfit(alg, trX, trY, teX, teY ,useTrainCV=True, cv_folds=5, early_stopping_rounds=50):
     dtrain = xgb.DMatrix(trX, label=trY)
     dtest = xgb.DMatrix(teX, label=teY)
 
@@ -25,45 +25,49 @@ def modelfit(alg, trX, trY, teX, teY ,useTrainCV=True, cv_folds=5, early_stoppin
         
     #Print model report:
     print "\nModel Report"
-    print "Accuracy : %.4g" % metrics.accuracy_score(trY, dtrain_predictions)
-    print "Test Accuracy : %.4g" % metrics.accuracy_score(teY, alg.predict(teX))
+    print "f1 : %.4g" % f1_score(trY, dtrain_predictions)
+    print "Test f1 : %.4g" % f1_score(teY, alg.predict(teX))
 
-trX, teX, trY, teY = load.loadData(onehot = False)
+trX, teX, trY, teY = load.loadData(onehot = False, poly=3)
+
+
 """
 xgb1 = XGBClassifier(
- learning_rate =0.01,
- n_estimators=5000,
- max_depth=2,
+ learning_rate =0.1,
+ n_estimators=500,
+ max_depth=4,
  min_child_weight=3,
- gamma=0.1,
- reg_alpha=1.0,
+ gamma=0.,
  subsample=0.7,
  colsample_bytree=0.7,
  objective= 'binary:logistic',
  nthread=4,
- scale_pos_weight=1)
+ scale_pos_weight=100.0)
 
 modelfit(xgb1, trX, trY, teX, teY)
 
 quit()
+"""
 
-
-
-param_test6 = {
- 'reg_alpha':[0.8, 1, 1.2]
+param_test = {
+ 'max_depth':range(3,10,2),
+ 'min_child_weight':range(1,6,2)
 }
 
-gsearch1 = GridSearchCV(estimator = XGBClassifier( learning_rate =0.1, n_estimators=81, max_depth=2,
- min_child_weight=3, gamma=0.1, subsample=0.7, colsample_bytree=0.7,
- objective= 'binary:logistic', nthread=4, scale_pos_weight=1,seed=27), 
- param_grid = param_test6, scoring='roc_auc',n_jobs=4,iid=False, cv=5)
+gsearch = GridSearchCV(estimator = XGBClassifier( learning_rate=0.1, n_estimators=135, max_depth=5,
+ min_child_weight=2, gamma=0, subsample=0.7, colsample_bytree=0.7,
+ objective= 'binary:logistic', nthread=4, scale_pos_weight=100.0,seed=27), 
+ param_grid = param_test, scoring='f1',n_jobs=4,iid=False, cv=5)
 
-gsearch1.fit(trX,trY)
-print gsearch1.best_params_, gsearch1.best_score_
+gsearch.fit(trX,trY)
+print gsearch.best_params_, gsearch.best_score_
+
+print "Training F1: ", f1_score(trY, gsearch.predict(trX))
+print 'Test F1:', f1_score(teY, gsearch.predict(teX))
 
 
 quit()
-"""
+
 
 
 
