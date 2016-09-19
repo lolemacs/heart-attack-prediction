@@ -11,7 +11,7 @@ param = {
 }
 
 gsearch = GridSearchCV(estimator = linear_model.LogisticRegression(class_weight='balanced'), 
- param_grid = param,n_jobs=4,iid=False, cv=5)
+ param_grid = param,n_jobs=4,iid=False, cv=5, scoring='f1')
 
 gsearch.fit(trX,trY)
 

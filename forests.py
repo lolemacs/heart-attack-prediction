@@ -10,12 +10,12 @@ sample_weight = load.get_weights(trY)
 
 
 param = {
- 'max_features':[5],
- 'max_depth':[4],
+ 'max_features':[3,4,5,6],
+ 'max_depth':[2,3,4,5],
 }
 
 gsearch = GridSearchCV(estimator = RandomForestClassifier(n_estimators = 500, class_weight='balanced'), 
- param_grid = param,n_jobs=4,iid=False, cv=5)
+ param_grid = param,n_jobs=4,iid=False, cv=5, scoring='f1')
 
 gsearch.fit(trX,trY)
 
