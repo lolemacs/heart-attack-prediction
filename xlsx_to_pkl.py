@@ -28,6 +28,3 @@ data = {"data" : X, "labels" : Y}
 
 with open(sys.argv[2],"wb") as f:
     cPickle.dump(data, f, -1)
-
-
-
