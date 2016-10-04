@@ -30,7 +30,7 @@ def one_hot(x,n):
     return o_h
 
 def loadData(onehot = True, prep = None, poly = None, split=True, fileName='data.pkl'):
-    with open(fileName,"rb") as f:
+    with open("data/%s"%fileName,"rb") as f:
         data = cPickle.load(f)
     X = data["data"].astype('float64')
     Y = data["labels"]

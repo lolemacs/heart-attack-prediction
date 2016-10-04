@@ -1,4 +1,4 @@
-import load
+from data import load
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import f1_score, accuracy_score
